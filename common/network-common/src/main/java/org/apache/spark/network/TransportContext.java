@@ -22,6 +22,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.function.Function;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -164,13 +165,18 @@ public class TransportContext implements Closeable {
 
   /** Create a server which will attempt to bind to a specific port. */
   public TransportServer createServer(int port, List<TransportServerBootstrap> bootstraps) {
-    return new TransportServer(this, null, port, rpcHandler, bootstraps);
+    return createServer(port, bootstraps, null);
   }
 
   /** Create a server which will attempt to bind to a specific host and port. */
   public TransportServer createServer(
       String host, int port, List<TransportServerBootstrap> bootstraps) {
     return new TransportServer(this, host, port, rpcHandler, bootstraps);
+  }
+
+  /** Create a server which will attempt to bind to a specific port */
+  public TransportServer createServer(int port, List<TransportServerBootstrap> bootstraps, Function<Throwable, Void> onUncaughtException) {
+    return new TransportServer(this, null, port, rpcHandler, bootstraps, onUncaughtException);
   }
 
   /** Creates a new server, binding to any available ephemeral port. */
